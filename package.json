@@ -2,7 +2,7 @@
   "name": "wwtg-p3",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://drteresavasquez.github.io/World-Wide-Travels-Pt-3",
+  "homepage": "http://drteresavasquez.github.io/World-Wide-Travels-Pt-3",
   "dependencies": {
     "bootstrap": "^4.0.0",
     "react": "^16.3.1",

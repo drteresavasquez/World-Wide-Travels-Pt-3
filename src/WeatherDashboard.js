@@ -250,7 +250,7 @@ class Weather extends Component{
 
   getWeather = () => {
     let zipCode = this.props.zip
-    var url = `http://api.openweathermap.org/data/2.5/weather?zip=${zipCode},us&appid=ea4decbd9523a788936a0d1c56cb5751&units=imperial`
+    var url = `https://api.openweathermap.org/data/2.5/weather?zip=${zipCode},us&appid=ea4decbd9523a788936a0d1c56cb5751&units=imperial`
     fetch(url)
     .then(result => result.json())
     .then(
