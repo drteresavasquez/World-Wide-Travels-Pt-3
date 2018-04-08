@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import helpers from './helpers';
 
 class WeatherDashboard extends Component{
   state = {      
@@ -15,11 +14,21 @@ class WeatherDashboard extends Component{
       };
     
       createLocation = (location) => {
-        const l = helpers.newWeather(location);
+        const l = this.newWeather(location);
         this.setState({
           locations: this.state.locations.concat(l),
         });
       };
+
+      newWeather = (attrs = {}) => {
+        const location = {
+          city: attrs.city || 'City',
+          zip: attrs.zip || 'ZIP',
+          id: this.state.locations.length + 1
+        };
+    
+        return location;
+      }
 
     // componentDidMount(){
     //     this.getWeather()
@@ -117,6 +126,7 @@ class EditableWeather extends React.Component {
     if (this.props.editFormOpen) {
       return (
           <WeatherForm
+            key={this.props.id}
             id={this.props.id}
             city={this.props.city}
             zip={this.props.zip}
@@ -125,6 +135,7 @@ class EditableWeather extends React.Component {
       } else {
         return (
           <Weather
+            key={this.props.id}
             id={this.props.id}
             city={this.props.city}
             zip={this.props.zip}
