@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 class WeatherDashboard extends Component{
   state = {      
       locations: [
-          {id: 1, zip: 37214, city: 'Nashville'},
-          {id: 2, zip: 37204, city: 'Nashville'},
-          {id: 3, zip: 37013, city: 'Antioch'},
+          {id: 1, zip: 38652},
+          {id: 2, zip: 37204},
+          {id: 3, zip: 32004},
         ]
       }
 
@@ -29,7 +29,6 @@ class WeatherDashboard extends Component{
           locations: this.state.locations.map((location) => {
             if (location.id === attrs.id) {
               return Object.assign({}, location, {
-                city: attrs.city,
                 zip: attrs.zip,
               });
             } else {
@@ -41,31 +40,22 @@ class WeatherDashboard extends Component{
 
       newWeather = (attrs = {}) => {
         const location = {
-          city: attrs.city || 'City',
           zip: attrs.zip || 'ZIP',
           id: this.state.locations.length + 1
         };
     
         return location;
       }
+    
+    handleTrashClick = (locationId) => {
+        this.deleteLocation(locationId);
+    };
 
-    // componentDidMount(){
-    //     this.getWeather()
-    // }
-
-    // getWeather = () => {
-    //     var url = 'http://api.openweathermap.org/data/2.5/weather?zip=94040,us&appid=ea4decbd9523a788936a0d1c56cb5751&units=imperial'
-    //     fetch(url)
-    //     .then(result => result.json())
-    //     .then(
-    //         (result) => {
-    //             console.log("RESULT", result);
-    //         },
-    //         (error) => {
-    //             console.log("ERROR", error);
-    //         }
-    //     )
-    // }
+    deleteLocation = (locationId) => {
+      this.setState({
+        locations: this.state.locations.filter(l => l.id !== locationId),
+      });
+    };
 
     render() {
         return (
@@ -74,6 +64,7 @@ class WeatherDashboard extends Component{
             <EditableWeatherList 
               locations={this.state.locations} 
               onFormSubmit={this.handleEditFormSubmit}
+              onTrashClick={this.handleTrashClick}
             />
             <ToggleableWeatherForm onFormSubmit={this.handleCreateFormSubmit}/>
             </div>
@@ -129,9 +120,9 @@ class EditableWeatherList extends Component{
         <EditableWeather
           key={location.id}
           id={location.id}
-          city={location.city}
           zip= {location.zip}
           onFormSubmit={this.props.onFormSubmit}
+          onTrashClick={this.props.onTrashClick}
         />
       ))
       return (
@@ -173,7 +164,6 @@ class EditableWeather extends Component {
       return (
           <WeatherForm
             id={this.props.id}
-            city={this.props.city}
             zip={this.props.zip}
             onFormSubmit={this.handleSubmit} 
             onFormClose={this.handleFormClose}
@@ -183,9 +173,9 @@ class EditableWeather extends Component {
         return (
           <Weather
             id={this.props.id}
-            city={this.props.city}
             zip={this.props.zip}
             onEditClick={this.handleEditClick}
+            onTrashClick={this.props.onTrashClick}
           />
         );
       }
@@ -195,11 +185,6 @@ class EditableWeather extends Component {
 class WeatherForm extends Component {
   state = {
     zip: this.props.zip || '',
-    city: this.props.city || '',
-    };
-
-    handleCityChange = (e) => {
-      this.setState({ city: e.target.value });
     };
   
     handleZipChange = (e) => {
@@ -209,7 +194,6 @@ class WeatherForm extends Component {
     handleSubmit = () => {
       this.props.onFormSubmit({
         id: this.props.id,
-        city: this.state.city,
         zip: this.state.zip,
       });
     };
@@ -221,17 +205,9 @@ class WeatherForm extends Component {
         <div className='content'>
           <div className='ui form'>
             <div className='field'>
-              <label>City</label>
-              <input
-                type='text'
-                value={this.state.city}
-                onChange={this.handleCityChange}
-              />
-            </div>
-            <div className='field'>
               <label>ZIP</label>
               <input
-                type='text'
+                type='number'
                 value={this.state.zip}
                 onChange={this.handleZipChange}
               />
@@ -257,30 +233,71 @@ class WeatherForm extends Component {
   }
 }
   
-function Weather(props){
-  // render(){
+class Weather extends Component{
+  state={
+    weather:'',
+    city:'',
+    error: null
+  }
+
+  handleTrashClick = () => {
+    this.props.onTrashClick(this.props.id);
+  };
+
+  componentDidMount(){
+    this.getWeather()
+  }
+
+  getWeather = () => {
+    let zipCode = this.props.zip
+    var url = `http://api.openweathermap.org/data/2.5/weather?zip=${zipCode},us&appid=ea4decbd9523a788936a0d1c56cb5751&units=imperial`
+    fetch(url)
+    .then(result => result.json())
+    .then(
+        (result) => {
+            this.setState({
+              weather: result.weather[0].main,
+              city: result.name,
+              temp: result.main.temp,
+            })
+        },
+        (error) => {
+          this.setState({
+            error: error
+          })
+        }
+    )
+  }
+
+  render(){
     return(
         <div className='ui centered card'>
             <div className='content'>
                 <div className='header'>
-                {props.city}
+                {this.state.city}
                 </div>
                 <div className='meta'>
-                {props.zip}
+                {this.props.zip}
                 </div>
                 <div className='center aligned description'>
                     <h2>
-                        WEATHER WHEN PULLED FROM API
+                        {this.state.temp} &#176;F
                     </h2>
+                    <div className='weather'>
+                        {this.state.weather}
+                    </div>
                 </div>
                 <div className='extra content'>
                 <span
                   className='right floated edit icon'
-                  onClick={props.onEditClick}
+                  onClick={this.props.onEditClick}
                 >
                    <i className='edit icon' />
                 </span>
-                    <span className='right floated trash icon'>
+                <span
+                  className='right floated trash icon'
+                  onClick={this.handleTrashClick}
+                >
                         <i className='trash icon'/>
                     </span>
                 </div>
@@ -288,6 +305,6 @@ function Weather(props){
         </div>
     )
   }
-// }
+}
 
   export default WeatherDashboard;
