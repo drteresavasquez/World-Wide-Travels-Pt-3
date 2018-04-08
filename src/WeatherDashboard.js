@@ -12,11 +12,30 @@ class WeatherDashboard extends Component{
       handleCreateFormSubmit = (location) => {
         this.createLocation(location);
       };
+
+      handleEditFormSubmit = (attrs) => {
+        this.updateWeather(attrs);
+      };
     
       createLocation = (location) => {
         const l = this.newWeather(location);
         this.setState({
           locations: this.state.locations.concat(l),
+        });
+      };
+
+      updateWeather = (attrs) => {
+        this.setState({
+          locations: this.state.locations.map((location) => {
+            if (location.id === attrs.id) {
+              return Object.assign({}, location, {
+                city: attrs.city,
+                zip: attrs.zip,
+              });
+            } else {
+              return location;
+            }
+          }),
         });
       };
 
@@ -52,7 +71,10 @@ class WeatherDashboard extends Component{
         return (
           <div className='ui three column centered grid'>
               <div className='column'>
-            <EditableWeatherList locations={this.state.locations} />
+            <EditableWeatherList 
+              locations={this.state.locations} 
+              onFormSubmit={this.handleEditFormSubmit}
+            />
             <ToggleableWeatherForm onFormSubmit={this.handleCreateFormSubmit}/>
             </div>
           </div>
@@ -105,8 +127,11 @@ class EditableWeatherList extends Component{
     render() {
       const locations = this.props.locations.map((location) => (
         <EditableWeather
+          key={location.id}
+          id={location.id}
           city={location.city}
           zip= {location.zip}
+          onFormSubmit={this.props.onFormSubmit}
         />
       ))
       return (
@@ -117,28 +142,50 @@ class EditableWeatherList extends Component{
     }
   }
   
-class EditableWeather extends React.Component {
+class EditableWeather extends Component {
   state = {
     editFormOpen: false,
   };
 
+  handleEditClick = () => {
+    this.openForm();
+  };
+
+  handleFormClose = () => {
+    this.closeForm();
+  };
+
+  handleSubmit = (location) => {
+    this.props.onFormSubmit(location);
+    this.closeForm();
+  };
+
+  closeForm = () => {
+    this.setState({ editFormOpen: false });
+  };
+
+  openForm = () => {
+    this.setState({ editFormOpen: true });
+  };
+
   render() {
-    if (this.props.editFormOpen) {
+    if (this.state.editFormOpen) {
       return (
           <WeatherForm
-            key={this.props.id}
             id={this.props.id}
             city={this.props.city}
             zip={this.props.zip}
+            onFormSubmit={this.handleSubmit} 
+            onFormClose={this.handleFormClose}
           />
         );
       } else {
         return (
           <Weather
-            key={this.props.id}
             id={this.props.id}
             city={this.props.city}
             zip={this.props.zip}
+            onEditClick={this.handleEditClick}
           />
         );
       }
@@ -210,32 +257,37 @@ class WeatherForm extends Component {
   }
 }
   
-  function Weather(props){
+function Weather(props){
+  // render(){
     return(
         <div className='ui centered card'>
-                <div className='content'>
-                    <div className='header'>
-                    {props.city}
-                    </div>
-                    <div className='meta'>
-                    {props.zip}
-                    </div>
-                    <div className='center aligned description'>
-                        <h2>
-                           WEATHER WHEN PULLED FROM API
-                        </h2>
-                    </div>
-                    <div className='extra content'>
-                        <span className='right floated edit icon'>
-                            <i className='edit icon'/>
-                        </span>
-                        <span className='right floated trash icon'>
-                            <i className='trash icon'/>
-                        </span>
-                    </div>
+            <div className='content'>
+                <div className='header'>
+                {props.city}
+                </div>
+                <div className='meta'>
+                {props.zip}
+                </div>
+                <div className='center aligned description'>
+                    <h2>
+                        WEATHER WHEN PULLED FROM API
+                    </h2>
+                </div>
+                <div className='extra content'>
+                <span
+                  className='right floated edit icon'
+                  onClick={props.onEditClick}
+                >
+                   <i className='edit icon' />
+                </span>
+                    <span className='right floated trash icon'>
+                        <i className='trash icon'/>
+                    </span>
                 </div>
             </div>
+        </div>
     )
   }
+// }
 
   export default WeatherDashboard;
