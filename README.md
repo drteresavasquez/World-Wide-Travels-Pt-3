@@ -4,6 +4,8 @@ This app was created to allow users the ability to view the weather using any ZI
 
 ![Weather Dashboard gif Walk-through](./public/weather-dashboard.gif | height="400")
 
+<img src="./public/weather-dashboard.gif" height="400" />
+
 ## Requirements
 Retrieve the temperature from openweather based on a zip code.
 Display component on the page with the temperature.
