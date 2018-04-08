@@ -2,6 +2,8 @@
 
 This app was created to allow users the ability to view the weather using any ZIP Code in the US.
 
+![Weather Dashboard gif Walk-through](./public/weather-dashboard.gif)
+
 ## Requirements
 Retrieve the temperature from openweather based on a zip code.
 Display component on the page with the temperature.
