@@ -14,4 +14,4 @@ Use componentDidMount() to call the method to get the weather.
 - Open Weather API
 
 ## Screen Shot
-![Weather Dashboard Screen Shot][public/screenshot.jpeg]
+![Weather Dashboard Screen Shot][https://raw.githubusercontent.com/drteresavasquez/World-Wide-Travels-Pt-3/master/public/screenshot.jpeg]
