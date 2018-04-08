@@ -12,3 +12,6 @@ Use componentDidMount() to call the method to get the weather.
 - ReactJS
 - Javascript
 - Open Weather API
+
+## Screen Shot
+![Weather Dashboard Screen Shot][public/screenshot.jpeg]
