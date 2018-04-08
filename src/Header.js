@@ -3,7 +3,7 @@ import React from 'react';
 function Header(){
     return(
     <header className="App-header">
-        <h1 className="App-title">Weather Getter</h1>
+      <h1 class="ui dividing centered header">Weather Dashboard</h1>
     </header>
     )
 }
